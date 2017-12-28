@@ -31,11 +31,17 @@ sandro = {
     }
 }
 
+book :: AddressBook
+book = insertEntry sandro emptyBook
+
 showEntry :: Entry -> String
 showEntry entry =
     entry.lastName <> ", " <>
     entry.firstName <> ": " <>
     showAddress entry.address
+
+printEntry :: String -> String -> AddressBook -> Maybe String
+printEntry firstName lastName book = map showEntry (findEntry firstName lastName book)
 
 showAddress :: Address -> String
 showAddress address =
@@ -53,3 +59,6 @@ findEntry :: String -> String -> AddressBook -> Maybe Entry
 findEntry firstName lastName book = 
     head $
     filter (\entry -> entry.firstName == firstName && entry.lastName == lastName) book
+
+findWithZip :: String -> AddressBook -> Maybe Entry
+findWithZip zip = filter (\entry -> entry.address.zip == zip) >>> head
