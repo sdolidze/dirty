@@ -138,3 +138,9 @@ reverse = reverse' []
       reverse' acc [] = acc
       reverse' acc xs = reverse' (cons (unsafePartial head xs) acc)
                                  (unsafePartial tail xs)
+
+reverse2 :: forall a. Array a -> Array a
+reverse2 = foldr (\x xs -> xs <> [x]) []
+
+reverse3 :: forall a. Array a -> Array a
+reverse3 = foldl (\xs x -> [x] <> xs) []
