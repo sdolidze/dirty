@@ -2,9 +2,11 @@ module Chapter4 where
 
 import Prelude
 
-import Data.Array (null)
+import Control.MonadZero (guard)
+import Data.Array (concat, concatMap, null, range)
 import Data.Array.Partial (head, tail)
-import Data.List (List, range)
+import Data.List as L
+import Data.Tuple (Tuple(..))
 import Partial.Unsafe (unsafePartial)
 
 fact :: Int -> Int
@@ -16,8 +18,8 @@ fib 0 = 0
 fib 1 = 1
 fib n = (fib $ n - 1) + (fib $ n - 2)
 
-firstTenFib :: List Int
-firstTenFib = map fib $ range 1 10
+firstTenFib :: L.List Int
+firstTenFib = map fib $ L.range 1 10
 
 length :: forall a. Array a -> Int
 length arr = 
@@ -62,3 +64,44 @@ plusOne2 :: Array Int
 plusOne2 = (\n -> n + 1) <$> [1, 2, 3, 4, 5]
 
 infixr 8 range as ..
+
+--
+
+concated :: Array Int
+concated = concat [[1, 2, 3], [4], [5]]
+
+concatMapped :: Array Int
+concatMapped = concatMap (\x -> [x, x * x, 0]) [1, 2, 3]
+
+-- 4.9
+
+pairs :: Int -> Array (Array Int)
+pairs n = do
+  i <- 1 .. n
+  j <- 1 .. n
+  pure [i, j]
+
+factors :: Int -> Array (Array Int)
+factors n = do
+  i <- 1 .. n
+  j <- 1 .. n
+  guard $ i * j == n
+  pure [i, j]
+
+factors2 :: Int -> Array Int
+factors2 n = do
+    i <- 1 .. n
+    guard $ n `mod` i == 0
+    pure i
+
+isPrime :: Int -> Boolean
+isPrime x = 
+    if x <= 1
+    then false
+    else length (factors2 x) == 2
+
+cartesianProduct :: forall a b. Array a -> Array b -> Array (Tuple a b)
+cartesianProduct xs ys = do
+    x <- xs
+    y <- ys
+    pure $ Tuple x y
